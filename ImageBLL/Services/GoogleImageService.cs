@@ -1,4 +1,5 @@
-﻿using ImageBLL.Helpers;
+﻿using System.Collections;
+using ImageBLL.Helpers;
 using ImageBLL.Services.Interfaces;
 using ImageDAL.Models;
 using ImageDAL.Repositories.Interfaces;
@@ -12,6 +13,8 @@ public class GoogleImageService : IGoogleImageService
 {
     private readonly IImageRepository _imageRepository;
     private readonly IHttpClientFactory _clientFactory;
+
+    
     public GoogleImageService(IImageRepository imageRepository, IHttpClientFactory clientFactory)
     {
         _imageRepository = imageRepository;
@@ -40,11 +43,13 @@ public class GoogleImageService : IGoogleImageService
 
     }
 
+
+
     private List<Image> ParseImages(JObject jsonResponse)
     {
         var images = new List<Image>();
 
-        foreach (var item in jsonResponse["shopping_results"])
+        foreach (var item in jsonResponse["images_results"])
         {
             images.Add(new Image
             {
