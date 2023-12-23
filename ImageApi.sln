@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageApi", "ImageApi\ImageApi.csproj", "{DAE1CED9-F578-4520-A60D-1AF40FF7427E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageDAL", "ImageDAL\ImageDAL.csproj", "{3C7B1D19-778B-4FB7-8DA2-B38D4D1E6A9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageBLL", "ImageBLL\ImageBLL.csproj", "{19728CB7-9557-4278-B1BE-3EFED68B056B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAE1CED9-F578-4520-A60D-1AF40FF7427E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE1CED9-F578-4520-A60D-1AF40FF7427E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE1CED9-F578-4520-A60D-1AF40FF7427E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE1CED9-F578-4520-A60D-1AF40FF7427E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C7B1D19-778B-4FB7-8DA2-B38D4D1E6A9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C7B1D19-778B-4FB7-8DA2-B38D4D1E6A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C7B1D19-778B-4FB7-8DA2-B38D4D1E6A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C7B1D19-778B-4FB7-8DA2-B38D4D1E6A9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19728CB7-9557-4278-B1BE-3EFED68B056B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19728CB7-9557-4278-B1BE-3EFED68B056B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19728CB7-9557-4278-B1BE-3EFED68B056B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19728CB7-9557-4278-B1BE-3EFED68B056B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D6DB6983-DDCA-450B-934A-5E05F99C8D51}
+	EndGlobalSection
+EndGlobal
