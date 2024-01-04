@@ -23,5 +23,6 @@ public static class Extensions
         services.AddScoped<IGoogleImageService, GoogleImageService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
     }
 }

@@ -1,19 +1,31 @@
-using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using ImageApi.Swagger;
 using ImageBLL;
 using ImageBLL.Mapping;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddBusinessLayer(builder.Configuration);
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\Users\Serg92\Desktop\Project\ImageApi"))
+    .SetApplicationName("ImageApi")
+    .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+builder.Services.AddDistributedMemoryCache(); // Добавляет поддержку кэширования в памяти
 
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Устанавливает время жизни сессии
+    options.Cookie.HttpOnly = true; // Устанавливает флаг HttpOnly для cookie сессии
+    options.Cookie.IsEssential = true; // Указывает, что cookie сессии является необходимым
+});
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -24,11 +36,15 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddAuthentication(auth =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+    .AddGoogle(options =>
     {
-        auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        auth.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.ClientId = "<476147450115-qlu3k383q78b58gta68ho3i8mjstfbkt.apps.googleusercontent.com>";
+        options.ClientSecret = "<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>";
     })
     .AddJwtBearer(options =>
     {
@@ -37,36 +53,32 @@ builder.Services.AddAuthentication(auth =>
         {
             ValidateIssuer = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidateAudience = false,
+            ValidateAudience = true,
             ValidAudience = builder.Configuration["Jwt:Audience"],
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
             ValidateLifetime = true,
-            RoleClaimType = ClaimTypes.Role
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role
         };
     });
-builder.Services.AddControllers();
 
+builder.Services.AddControllers();
 builder.Services.AddAuthorization();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

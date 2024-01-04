@@ -71,6 +71,7 @@ public class FavoriteService : IFavoriteService
     public async Task<List<FavoriteImageDto>> GetAllFavorite()
     {
         var result = new List<FavoriteImageDto>();
+        var userId = _userService.UserId;
         var currentImage = await _favoriteUserImageRepository.GetAllByUserId(_userService.UserId);
         foreach (var favoriteUserImage in currentImage)
         {

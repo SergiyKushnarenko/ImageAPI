@@ -58,6 +58,24 @@ public class AuthenticationBearerService : IAuthenticationBearerService
         }
     }
 
+
+    public async Task<ResponseModelDto> LoginByGoogle(User currentUser)
+    {
+        try
+        {
+            var jwtBearerToken = GetJWTBearerToken(currentUser);
+            var mappedResult = _mapper.Map<ResponseModelDto>(currentUser);
+            mappedResult.JwtBearerToken = jwtBearerToken;
+            return mappedResult;
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "An error occurred during login");
+            throw;
+        }
+    }
+
     /// <summary>
     /// User registration method
     /// </summary>

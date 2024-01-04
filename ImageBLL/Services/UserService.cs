@@ -32,5 +32,8 @@ public class UserService : IUserService
         return claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
     }
 
-    
+    public ISession GetSession()
+    {
+        return _httpContext?.HttpContext?.Session; 
+    }
 }
