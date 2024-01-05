@@ -38,22 +38,25 @@ namespace ImageApi.Controllers
             HttpContext.Session.SetString(PkceSessionKey, codeVerifier);
 
             var googleAuthUrl = _googleOAuthService.GenerateOAuthRequestUrl(codeChallenge);
-            return Ok(googleAuthUrl);
+            
+            return Ok( new CodeRequestModel(){Url = googleAuthUrl,SessionId = codeVerifier } );
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         public async Task<IActionResult> CodeAsync([FromBody] CodeRequestModel model)
         {
-            var code = model.Code;
+            var code = model.Url;
+            var sessionId = model.SessionId;
             var codeVerifier = HttpContext.Session.GetString(PkceSessionKey);
 
-            var jwtToken = await _googleOAuthService.ExchangeCodeOnTokenAsync(code, codeVerifier);
+            var jwtToken = await _googleOAuthService.ExchangeCodeOnTokenAsync(code, sessionId);
             return Ok(jwtToken);
         }
         public class CodeRequestModel
         {
-            public string Code { get; set; }
+            public string Url { get; set; }
+            public string SessionId { get; set; }
         }
     }
 }

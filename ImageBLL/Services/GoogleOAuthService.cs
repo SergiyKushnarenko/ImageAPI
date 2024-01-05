@@ -3,6 +3,7 @@ using ImageBLL.Helpers;
 using ImageBLL.Models.Auth;
 using ImageBLL.Services.Interfaces;
 using ImageDAL.Models;
+using ImageDAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.WebUtilities;
@@ -18,10 +19,12 @@ namespace ImageBLL.Services
         private const string ClientSecret = "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";
 
         private readonly IAuthenticationBearerService _authenticationBearerService;
+        private readonly IUserRepository _userRepository;
 
-        public GoogleOAuthService(IAuthenticationBearerService authenticationBearerService)
+        public GoogleOAuthService(IAuthenticationBearerService authenticationBearerService, IUserRepository userRepository)
         {
             _authenticationBearerService = authenticationBearerService;
+            _userRepository = userRepository;
         }
 
         public string GenerateOAuthRequestUrl(string codeChallenge)
@@ -65,13 +68,20 @@ namespace ImageBLL.Services
             var tokenResponse = JsonConvert.DeserializeObject<TokenResultDto>(await response.Content.ReadAsStringAsync());
             var userInfo = await GetGoogleUserInfo(tokenResponse.AccessToken);
             var userName = userInfo.Name.Split(' ');
-            var user = new User()
+            var currentUser = await _userRepository.GetAsyncByEmail(userInfo.Email);
+            if (currentUser is null)
             {
-                Email = userInfo.Email,
-                FirstName = userName[0],
-                LastName = userName[1]
-            };
-            var jwtToken = await  _authenticationBearerService.LoginByGoogle(user);
+                var newUser = new User()
+                {
+                    Email = userInfo.Email,
+                    FirstName = userName[0],
+                    LastName = userName[1]
+                };
+                var userResult = await _userRepository.CreateAsync(newUser);
+                var responseModel = await _authenticationBearerService.LoginByGoogle(userResult);
+                return responseModel;
+            }
+            var jwtToken = await  _authenticationBearerService.LoginByGoogle(currentUser);
             return jwtToken;
         }
 
